@@ -6392,6 +6392,11 @@ DEFPY (af_label_vpn_export,
 	/*
 	 * pre-change: un-export vpn routes (vpn->vrf routes unaffected)
 	 */
+        if (label_auto) {
+                SET_FLAG(bgp->vpn_policy[afi].flags,
+                         BGP_VPN_POLICY_TOVPN_LABEL_AUTO);
+        }
+
 	vpn_leak_prechange(BGP_VPN_POLICY_DIR_TOVPN, afi,
 			   bgp_get_default(), bgp);
 
@@ -6420,8 +6425,6 @@ DEFPY (af_label_vpn_export,
 
 	bgp->vpn_policy[afi].tovpn_label = label;
 	if (label_auto) {
-		SET_FLAG(bgp->vpn_policy[afi].flags,
-			 BGP_VPN_POLICY_TOVPN_LABEL_AUTO);
 		bgp_lp_get(LP_TYPE_VRF, &bgp->vpn_policy[afi],
 			   vpn_leak_label_callback);
 	}

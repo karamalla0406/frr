@@ -1002,7 +1002,10 @@ void vpn_leak_from_vrf_withdraw_all(struct bgp *bgp_vpn, /* to */
 							   __func__);
 					bgp_aggregate_decrement(bgp_vpn, &bn->p,
 								bi, afi, safi);
-					bgp_info_delete(bn, bi);
+					if (!CHECK_FLAG(bgp_vrf->vpn_policy[afi].flags,
+							BGP_VPN_POLICY_TOVPN_LABEL_AUTO)) {
+						bgp_info_delete(bn, bi);
+					}
 					bgp_process(bgp_vpn, bn, afi, safi);
 				}
 			}
